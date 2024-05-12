@@ -14,19 +14,25 @@ def download_video(url, save_dir, format):
         title = yt.title
         filename = "".join(c for c in title if c.isalnum() or c.isspace() or c in "-_.") + "." + format
         # Set save path
-        save_path = os.path.join(save_dir)
+        save_path = os.path.join(save_dir, filename)
+
+        # Check if the file already exists
+        if os.path.exists(save_path):
+            overwrite = messagebox.askyesno("Fichier déjà existant", f"Le fichier '{filename}' existe déjà dans ce dossier. Voulez-vous le remplacer ?")
+            if not overwrite:
+                return  # Exit function if user chooses not to overwrite
 
         # Download video or audio based on format
         if format == "mp4":
-            yt.streams.filter(file_extension="mp4").first().download(save_path)
+            yt.streams.filter(resolution="720p").first().download(save_dir)
         elif format == "mp3":
-            audio_stream = yt.streams.filter(only_audio=True).first()  # Utiliser only_audio
+            audio_stream = yt.streams.filter(only_audio=True).first()
             # Télécharger l'audio
-            audio_stream.download(save_path,filename=filename)
+            audio_stream.download(save_dir, filename=filename)
         else:
-            raise ValueError("Invalid format: " + format)
+            raise ValueError("Format invalide : " + format)
 
-        messagebox.showinfo("Téléchargement terminé", f"{title} téléchargé dans {save_path}")
+        messagebox.showinfo("Téléchargement terminé", f"{title} téléchargé dans {save_dir}")
     except Exception as e:
         messagebox.showerror("Erreur", f"Échec du téléchargement : {e}")
 
