@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import filedialog, messagebox
 import pytube
+import subprocess
 from PIL import Image, ImageTk
 import os
 from os import path
@@ -12,16 +13,12 @@ def download_video(url, save_dir, format):
 
         # Get video title
         title = yt.title
-        filename = "".join(c for c in title if c.isalnum() or c.isspace() or c in "-_.") + "." + format
-        # Set save path
-        save_path = os.path.join(save_dir, filename)
+        filename = "".join(c for c in title if c.isalnum() or c.isspace() or c in "-_.") + "." + format        
 
-        # Check if the file already exists
-        if os.path.exists(save_path):
-            overwrite = messagebox.askyesno("Fichier déjà existant", f"Le fichier '{filename}' existe déjà dans ce dossier. Voulez-vous le remplacer ?")
-            if not overwrite:
-                return  # Exit function if user chooses not to overwrite
-
+        filename = filedialog.asksaveasfilename(initialfile=filename, initialdir=save_dir, defaultextension=f".{format}", filetypes=[(f"{format.upper()} files", f"*.{format}")])
+        if not filename:  # Si l'utilisateur annule la sélection
+            return
+        
         # Download video or audio based on format
         if format == "mp4":
             yt.streams.filter(resolution="720p").first().download(save_dir)
