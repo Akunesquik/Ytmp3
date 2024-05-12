@@ -3,6 +3,7 @@ from tkinter import filedialog, messagebox
 import pytube
 from PIL import Image, ImageTk
 import os
+from os import path
 
 def download_video(url, save_dir, format):
     try:
@@ -43,7 +44,8 @@ def main():
 
     # IMG
     image_path = "public/img/pngwing.com.png"
-    image = Image.open(image_path)
+    path_to_icon = path.abspath(path.join(path.dirname(__file__), image_path)) 
+    image = Image.open(path_to_icon)
     image = image.resize((150, 150))
     tk_image = ImageTk.PhotoImage(image)
     image_label = tk.Label(window, image=tk_image)
