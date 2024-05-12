@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import filedialog, messagebox
 import pytube
+from PIL import Image, ImageTk
 import os
 
 def download_video(url, save_dir, format):
@@ -32,35 +33,54 @@ def download_video(url, save_dir, format):
 def main():
     window = tk.Tk()
     window.title("Convertisseur YouTube")
-    window.geometry("920x640")
-   
+    window.geometry("640x320")
+    window.resizable(False, False)
+
    # Create grid layout
-    window.rowconfigure(0, weight=1, minsize=50)  # Row 1: min=50, max=100
-    window.rowconfigure(1, weight=1, minsize=50)  # Row 2: min=50, max=100
-    window.rowconfigure(2, weight=1, minsize=50)  # Row 3: min=50, max=100
     window.columnconfigure(0, weight=1, minsize=100)  # Column 1: min=100, max=200
     window.columnconfigure(1, weight=3, minsize=200)  # Column 2: min=200, max=400
     window.columnconfigure(2, weight=1, minsize=100)  # Column 3: min=100, max=200
 
+    # IMG
+    image_path = "public/img/pngwing.com.png"
+    image = Image.open(image_path)
+    image = image.resize((150, 150))
+    tk_image = ImageTk.PhotoImage(image)
+    image_label = tk.Label(window, image=tk_image)
+    image_label.grid(row=0, column=1)
+
     # URL
     url_label = tk.Label(window, text="URL de la vidéo YouTube :")
-    url_label.grid(row=0, column=0)
+    url_label.grid(row=1, column=0)
     url_entry = tk.Entry(window)
-    url_entry.grid(row=0, column=1)
+    url_entry.grid(row=1, column=1,sticky='ew')
 
     # Save directory
+    ## Variables
+    default_download_dir = os.path.join(os.path.expanduser('~'), 'Downloads')
+    save_dir_var = tk.StringVar(value=default_download_dir)
+    ## Affichage
     save_dir_label = tk.Label(window, text="Dossier de sauvegarde :")
-    save_dir_label.grid(row=1, column=0)
-    save_dir_entry = tk.Entry(window)
-    save_dir_entry.grid(row=1, column=1)
-    save_dir_button = tk.Button(window, text="Sélectionner", command=lambda: select_save_dir(save_dir_entry))
-    save_dir_button.grid(row=1, column=2)
+    save_dir_label.grid(row=2, column=0)
+    save_dir_entry = tk.Entry(window, textvariable=save_dir_var)
+    save_dir_entry.grid(row=2, column=1,sticky='ew')
+    save_dir_button = tk.Button(window, text="Sélectionner le dossier", command=lambda: select_save_dir(save_dir_entry))
+    save_dir_button.grid(row=2, column=2)
 
     # Download buttons
-    mp3_button = tk.Button(window, text="MP3", command=lambda: download_video(url_entry.get(), save_dir_entry.get(), "mp3"))
-    mp3_button.grid(row=2, column=0)
-    mp4_button = tk.Button(window, text="MP4", command=lambda: download_video(url_entry.get(), save_dir_entry.get(), "mp4"))
-    mp4_button.grid(row=2, column=2)
+    # Création d'une sous-frame pour les boutons
+    button_frame = tk.Frame(window)
+    button_frame.grid(row=3, column=1, sticky='nsew')
+
+    # Configuration de la sous-frame pour que les boutons occupent chacun 50% de la largeur
+    button_frame.columnconfigure(0, weight=1)
+    button_frame.columnconfigure(1, weight=1)
+
+    # Download buttons
+    mp3_button = tk.Button(button_frame, text="MP3", command=lambda: download_video(url_entry.get(), save_dir_entry.get(), "mp3"))
+    mp3_button.grid(row=0, column=0, sticky='ew')  # Ancré à l'est et à l'ouest
+    mp4_button = tk.Button(button_frame, text="MP4", command=lambda: download_video(url_entry.get(), save_dir_entry.get(), "mp4"))
+    mp4_button.grid(row=0, column=1, sticky='ew')  # Ancré à l'est et à l'ouest
 
     # Center the window (optional)
     window.update_idletasks()  # Update window dimensions
