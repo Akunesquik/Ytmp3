@@ -1,42 +1,43 @@
 import tkinter as tk
 from tkinter import filedialog, messagebox
-import pytube
-import subprocess
+from pytubefix import YouTube
 from PIL import Image, ImageTk
 import os
 from os import path
 
-def download_video(url, save_dir, format):
-    try:
-        # Create YouTube object
-        yt = pytube.YouTube(url)
 
+
+
+def download_video(url, save_dir, format):
+        # Create YouTube object
+        yt = YouTube(url)
         # Get video title
         title = yt.title
-        filename = "".join(c for c in title if c.isalnum() or c.isspace() or c in "-_.") + "." + format        
 
+
+        filename = "".join(c for c in title if c.isalnum() or c.isspace() or c in "-_.") + "." + format 
+        if format == "mp3":
+            format = "m4a"
         filename = filedialog.asksaveasfilename(initialfile=filename, initialdir=save_dir, defaultextension=f".{format}", filetypes=[(f"{format.upper()} files", f"*.{format}")])
+        
         if not filename:  # Si l'utilisateur annule la sélection
             return
-        
+        filename = os.path.basename(filename)
+        print(filename)
         # Download video or audio based on format
         if format == "mp4":
-            yt.streams.filter(resolution="720p").first().download(save_dir)
-        elif format == "mp3":
-            audio_stream = yt.streams.filter(only_audio=True).first()
-            # Télécharger l'audio
-            audio_stream.download(save_dir, filename=filename)
+            yt.streams.get_highest_resolution().download(output_path=save_dir, filename=filename)
+        elif format == "mp3" or format == "m4a":
+            yt.streams.get_audio_only().download(output_path=save_dir, filename=filename)
         else:
             raise ValueError("Format invalide : " + format)
 
-        messagebox.showinfo("Téléchargement terminé", f"{title} téléchargé dans {save_dir}")
-    except Exception as e:
-        messagebox.showerror("Erreur", f"Échec du téléchargement : {e}")
+        messagebox.showinfo("Téléchargement terminé", f"{filename} téléchargé dans {save_dir}")
 
 
 def main():
     window = tk.Tk()
-    window.title("Convertisseur YouTube")
+    window.title("Youtube MP3/MP4")
     window.geometry("640x320")
     window.resizable(False, False)
 

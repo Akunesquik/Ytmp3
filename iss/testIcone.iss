@@ -8,6 +8,7 @@
 #define MyAppAssocName MyAppName + " File"
 #define MyAppAssocExt ".myp"
 #define MyAppAssocKey StringChange(MyAppAssocName, " ", "") + MyAppAssocExt
+#Define AppPath "C:\Users\alexi\Desktop\projet\Ytmp3"
 
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application. Do not use the same AppId value in installers for other applications.
@@ -35,9 +36,9 @@ Name: "french"; MessagesFile: "compiler:Languages\French.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "C:\Users\Alexis\Desktop\ProjetPerso\Ytmp3\dist\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\Alexis\Desktop\ProjetPerso\Ytmp3\public\img\pngwing.com.png"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\Alexis\Desktop\ProjetPerso\Ytmp3\icone.ico"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#AppPath}\dist\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#AppPath}\public\img\pngwing.com.png"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#AppPath}\icone.ico"; DestDir: "{app}"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Registry]
